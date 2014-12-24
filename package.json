@@ -1,0 +1,39 @@
+{
+  "name": "node-procexss",
+  "description": "Middleware to help to prevent xss attacks in your Express/Connect apps",
+  "version": "1.0.0",
+  "author": "Ziya SARIKAYA @ziyasal <me@jongleberry.com> (http://ziyasal.com)",
+  "contributors": [
+    "Ziya SARIKAYA <sarikayaziya@gmail.com>"
+  ],
+  "license": "MIT",
+  "repository": "ziyasal/node-procexss",
+  "dependencies": {
+  
+  },
+  "devDependencies": {
+    "body-parser": "~1.9.2",
+    "connect": "3",
+    "istanbul": "0.3.2",
+    "mocha": "~2.0.1",
+    "supertest": "~0.14.0"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "mocha --check-leaks --reporter spec --bail test/",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --check-leaks --reporter dot test/",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --check-leaks --reporter spec test/"
+  },
+  "files": [
+    "HISTORY.md",
+    "LICENSE",
+    "index.js"
+  ],
+  "keywords": [
+    "xss",
+    "middleware",
+    "express"
+  ]
+}
