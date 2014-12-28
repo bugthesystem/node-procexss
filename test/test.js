@@ -9,7 +9,8 @@ var assert = require('assert')
     , url = require('url')
     , should = require('should')
 
-    , procexss = require('..');
+    , procexss = require('..')
+    ;
 
 describe('procexss', function () {
     it('should work in req.body', function (done) {
@@ -25,7 +26,7 @@ describe('procexss', function () {
                 should.exist(res)
                 res.text.should.equal(JSON.stringify({name: 'john', vuln: ''}))
 
-                done();
+                done()
             });
     });
 
@@ -40,13 +41,13 @@ describe('procexss', function () {
                 should.exist(res)
                 res.text.should.equal(JSON.stringify({query: 'Manny', range: '1..5', order: 'desc', vuln: ''}))
 
-                done();
+                done()
             });
     });
-    
-     it('should not work if req.url is in whiteList', function (done) {
+
+    it('should not work if req.url is in whiteList', function (done) {
         var server = createServer({
-            whiteList:['http:localhost:3000/']
+            whiteList: ['/']
         })
 
         request(server)
@@ -55,9 +56,14 @@ describe('procexss', function () {
             .end(function (err, res) {
                 should.not.exist(err)
                 should.exist(res)
-                res.text.should.equal(JSON.stringify({query: 'Manny', range: '1..5', order: 'desc', vuln: '<script>alert(1);</script>'}))
+                res.text.should.equal(JSON.stringify({
+                    query: 'Manny',
+                    range: '1..5',
+                    order: 'desc',
+                    vuln: '<script>alert(1);</script>'
+                }))
 
-                done();
+                done()
             });
     });
 });
