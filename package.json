@@ -9,14 +9,15 @@
   "license": "MIT",
   "repository": "ziyasal/node-procexss",
   "dependencies": {
-  
+    "sanitizer": "^0.1.2",
+    "should": "^4.4.2",
+    "supertest": "^0.15.0"
   },
   "devDependencies": {
     "body-parser": "~1.9.2",
     "connect": "3",
     "istanbul": "0.3.2",
-    "mocha": "~2.0.1",
-    "supertest": "~0.14.0"
+    "mocha": "~2.0.1"
   },
   "engines": {
     "node": ">= 0.8.0"
