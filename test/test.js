@@ -43,6 +43,23 @@ describe('procexss', function () {
                 done();
             });
     });
+    
+     it('should not work if req.url is in whiteList', function (done) {
+        var server = createServer({
+            whiteList:['http:localhost:3000/']
+        })
+
+        request(server)
+            .get('/')
+            .query({query: 'Manny', range: '1..5', order: 'desc', vuln: '<script>alert(1);</script>'})
+            .end(function (err, res) {
+                should.not.exist(err)
+                should.exist(res)
+                res.text.should.equal(JSON.stringify({query: 'Manny', range: '1..5', order: 'desc', vuln: '<script>alert(1);</script>'}))
+
+                done();
+            });
+    });
 });
 
 function createServer(opts) {
