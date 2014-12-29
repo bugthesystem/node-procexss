@@ -1,90 +1,142 @@
 process.env.NODE_ENV = 'test';
 
-var assert = require('assert')
-    , connect = require('connect')
-    , bodyParser = require('body-parser')
-    , http = require('http')
+var
+    assert = require('assert'),
+    connect = require('connect'),
+    bodyParser = require('body-parser'),
+    http = require('http')
 
-    , request = require('supertest')
-    , url = require('url')
-    , should = require('should')
+, request = require('supertest'), url = require('url'), should = require('should'), sanitizer = require('sanitizer'), procexss = require('..');
 
-    , procexss = require('..')
-    ;
+describe('procexss', function() {
+    var formJson, sanitizedFormJson, queryJson, sanitizedQueryJson
 
-describe('procexss', function () {
-    it('should work in req.body', function (done) {
+    before(function() {
+        formJson = {
+            name: 'john',
+            vuln: '<script>alert(1);</script>'
+        }
+
+        queryJson = {
+            query: 'Manny',
+            range: '1..5',
+            order: 'desc',
+            vuln: '<script>alert(1);</script>'
+        }
+
+        sanitizedFormJson = formJson
+        sanitizedFormJson.vuln = sanitizer.sanitize(formJson.vuln)
+
+        sanitizedQueryJson = queryJson
+        sanitizedQueryJson.vuln = sanitizer.sanitize(queryJson.vuln)
+    })
+
+
+    it('should sanitize req.body', function(done) {
         var server = createServer()
 
         request(server)
             .post('/')
             .type('form')
-            .send({name: 'john'})
-            .send({vuln: '<script>alert(1);</script>'})
-            .end(function (err, res) {
-                should.not.exist(err)
-                should.exist(res)
-                res.text.should.equal(JSON.stringify({name: 'john', vuln: ''}))
+            .send(formJson)
 
-                done()
-            });
-    });
+        .end(function(err, res) {
+            should.not.exist(err)
+            should.exist(res)
+            res.text.should.equal(JSON.stringify(sanitizedFormJson))
 
-    it('should work in req.query', function (done) {
+            done()
+        })
+    })
+
+    it('should sanitize req.query', function(done) {
         var server = createServer()
 
         request(server)
             .get('/')
-            .query({query: 'Manny', range: '1..5', order: 'desc', vuln: '<script>alert(1);</script>'})
-            .end(function (err, res) {
+            .query(queryJson)
+            .end(function(err, res) {
                 should.not.exist(err)
                 should.exist(res)
-                res.text.should.equal(JSON.stringify({query: 'Manny', range: '1..5', order: 'desc', vuln: ''}))
+                res.text.should.equal(JSON.stringify(sanitizedQueryJson))
 
                 done()
-            });
-    });
+            })
+    })
 
-    it('should not work if req.url is in whiteList', function (done) {
+    it('should not sanitize if req.url is exist in whiteList', function(done) {
         var server = createServer({
             whiteList: ['/']
         })
 
         request(server)
             .get('/')
-            .query({query: 'Manny', range: '1..5', order: 'desc', vuln: '<script>alert(1);</script>'})
-            .end(function (err, res) {
+            .query(queryJson)
+            .end(function(err, res) {
                 should.not.exist(err)
                 should.exist(res)
-                res.text.should.equal(JSON.stringify({
-                    query: 'Manny',
-                    range: '1..5',
-                    order: 'desc',
-                    vuln: '<script>alert(1);</script>'
-                }))
+                res.text.should.equal(JSON.stringify(queryJson))
 
                 done()
-            });
-    });
+            })
+    })
+
+    it('should not sanitize req.body if options.sanitizeBody equals false', function(done) {
+        var server = createServer({
+            sanitizeQuery: false
+        })
+
+        request(server)
+            .post('/')
+            .type('form')
+            .send(formJson)
+            .end(function(err, res) {
+                should.not.exist(err)
+                should.exist(res)
+                res.text.should.equal(JSON.stringify(formJson))
+
+                done()
+            })
+    })
+
+
+    it('should not sanitize req.query if options.sanitizeQuery equals false', function(done) {
+        var server = createServer({
+            sanitizeQuery: false
+        })
+
+        request(server)
+            .get('/')
+            .query(queryJson)
+            .end(function(err, res) {
+                should.not.exist(err)
+                should.exist(res)
+                res.text.should.equal(JSON.stringify(queryJson))
+
+                done()
+            })
+    })
 });
 
 function createServer(opts) {
     var app = connect()
 
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         req.query = url.parse(req.url, true).query
         next()
     })
 
     // parse application/x-www-form-urlencoded
-    app.use(bodyParser.urlencoded({extended: false}))
+    app.use(bodyParser.urlencoded({
+        extended: false
+    }))
 
     // parse application/json
     app.use(bodyParser.json())
 
     app.use(procexss(opts))
 
-    app.use(function (req, res) {
+    app.use(function(req, res) {
         if (req._body) {
             res.end(JSON.stringify(req.body));
         }
