@@ -17,7 +17,7 @@
     "istanbul": "0.3.2",
     "mocha": "~2.0.1",
     "sanitizer": "^0.1.2",
-    "should": "^4.4.2",
+    "should": "^3.0.0",
     "supertest": "^0.15.0"
   },
   "engines": {
