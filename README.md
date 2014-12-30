@@ -24,7 +24,7 @@ This middleware sanitize req.body or req.query and adds a `req.dirty` flasg to i
 - `whiteList` List of ignored urls. (default:[])
 - `sanitizeBody` A flag to enable req.body sanitization. (default:true)
 - `sanitizeQuery` A flag to enable req.body sanitization. (default:true)
-- 
+
 ## Example
 
 ### Simple express example
