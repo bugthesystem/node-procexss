@@ -15,13 +15,13 @@
     "body-parser": "~1.9.2",
     "connect": "3",
     "istanbul": "0.3.2",
+     "should": "^4.4.2",
     "mocha": "~2.0.1",
     "sanitizer": "^0.1.2",
-    "should": "^4.4.2",
     "supertest": "^0.15.0"
   },
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">= 0.10.0"
   },
   "scripts": {
     "test": "mocha --check-leaks --reporter spec --bail test/",
