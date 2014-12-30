@@ -1,4 +1,4 @@
-procexss-node [![Build Status](https://travis-ci.org/ziyasal/node-procexss.svg?branch=master)](https://travis-ci.org/ziyasal/node-procexss) [![Coverage Status](https://img.shields.io/coveralls/ziyasal/node-procexss.svg)](https://coveralls.io/r/ziyasal/node-procexss?branch=master)
+node-procexss [![Build Status](https://travis-ci.org/ziyasal/node-procexss.svg?branch=master)](https://travis-ci.org/ziyasal/node-procexss) [![Coverage Status](https://img.shields.io/coveralls/ziyasal/node-procexss.svg)](https://coveralls.io/r/ziyasal/node-procexss?branch=master)
 =============
 [![NPM](https://nodei.co/npm/node-procexss.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/node-procexss/)
 
