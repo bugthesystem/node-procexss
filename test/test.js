@@ -32,91 +32,150 @@ describe('procexss', function() {
     })
 
 
-    it('should sanitize req.body', function(done) {
-        var server = createServer()
+    describe('mode sanitize', function() {
+        it('should sanitize req.body', function(done) {
+            var server = createServer()
 
-        request(server)
-            .post('/')
-            .type('form')
-            .send(formJson)
+            request(server)
+                .post('/')
+                .type('form')
+                .send(formJson)
 
-        .end(function(err, res) {
-            should.not.exist(err)
-            should.exist(res)
-            res.text.should.equal(JSON.stringify(sanitizedFormJson))
-
-            done()
-        })
-    })
-
-    it('should sanitize req.query', function(done) {
-        var server = createServer()
-
-        request(server)
-            .get('/')
-            .query(queryJson)
             .end(function(err, res) {
                 should.not.exist(err)
                 should.exist(res)
-                res.text.should.equal(JSON.stringify(sanitizedQueryJson))
+                res.text.should.equal(JSON.stringify(sanitizedFormJson))
 
                 done()
             })
-    })
-
-    it('should not sanitize if req.url is exist in whiteList', function(done) {
-        var server = createServer({
-            whiteList: ['/']
         })
 
-        request(server)
-            .get('/')
-            .query(queryJson)
-            .end(function(err, res) {
-                should.not.exist(err)
-                should.exist(res)
-                res.text.should.equal(JSON.stringify(queryJson))
+        it('should sanitize req.query', function(done) {
+            var server = createServer()
 
-                done()
-            })
-    })
+            request(server)
+                .get('/')
+                .query(queryJson)
+                .end(function(err, res) {
+                    should.not.exist(err)
+                    should.exist(res)
+                    res.text.should.equal(JSON.stringify(sanitizedQueryJson))
 
-    it('should not sanitize req.body if options.sanitizeBody equals false', function(done) {
-        var server = createServer({
-            sanitizeQuery: false
+                    done()
+                })
         })
 
-        request(server)
-            .post('/')
-            .type('form')
-            .send(formJson)
-            .end(function(err, res) {
-                should.not.exist(err)
-                should.exist(res)
-                res.text.should.equal(JSON.stringify(formJson))
-
-                done()
+        it('should not sanitize if req.url is exist in whiteList', function(done) {
+            var server = createServer({
+                whiteList: ['/']
             })
-    })
 
+            request(server)
+                .get('/')
+                .query(queryJson)
+                .end(function(err, res) {
+                    should.not.exist(err)
+                    should.exist(res)
+                    res.text.should.equal(JSON.stringify(queryJson))
 
-    it('should not sanitize req.query if options.sanitizeQuery equals false', function(done) {
-        var server = createServer({
-            sanitizeQuery: false
+                    done()
+                })
         })
 
-        request(server)
-            .get('/')
-            .query(queryJson)
-            .end(function(err, res) {
-                should.not.exist(err)
-                should.exist(res)
-                res.text.should.equal(JSON.stringify(queryJson))
-
-                done()
+        it('should not sanitize req.body if !options.sanitizeBody', function(done) {
+            var server = createServer({
+                sanitizeBody: false
             })
+
+            request(server)
+                .post('/')
+                .type('form')
+                .send(formJson)
+                .end(function(err, res) {
+                    should.not.exist(err)
+                    should.exist(res)
+                    res.text.should.equal(JSON.stringify(formJson))
+
+                    done()
+                })
+        })
+
+
+        it('should not sanitize req.query if !options.sanitizeQuery', function(done) {
+            var server = createServer({
+                sanitizeQuery: false
+            })
+
+            request(server)
+                .get('/')
+                .query(queryJson)
+                .end(function(err, res) {
+                    should.not.exist(err)
+                    should.exist(res)
+                    res.text.should.equal(JSON.stringify(queryJson))
+
+                    done()
+                })
+        })
     })
-});
+
+    describe('mode header', function() {
+        it('header (enabled, mode block)', function(done) {
+            var server = createServer({
+                mode: 'header'
+            })
+
+            request(server)
+                .get('/')
+                .expect('X-XSS-Protection', '1; mode=block')
+                .expect(200, done);
+        })
+
+        it('header (!enabled, mode block)', function(done) {
+            var server = createServer({
+                mode: 'header',
+                header: {
+                    enabled: 0
+                }
+            })
+
+            request(server)
+                .get('/')
+                .expect('X-XSS-Protection', '0; mode=block')
+                .expect(200, done);
+        })
+
+        it('header (enabled is boolean, mode block)', function(done) {
+            var server = createServer({
+                mode: 'header',
+                header: {
+                    enabled: true
+                }
+            })
+
+            request(server)
+                .get('/')
+                .expect('X-XSS-Protection', '1; mode=block')
+                .expect(200, done);
+        })
+
+        it('header (enabled; custom mode)', function(done) {
+            var server = createServer({
+                mode: 'header',
+                header: {
+                    enabled: 1,
+                    mode: 'foo'
+                }
+            })
+
+            request(server)
+                .get('/')
+                .expect('X-XSS-Protection', '1; mode=foo')
+                .expect(200, done);
+        })
+    })
+
+})
 
 function createServer(opts) {
     var app = connect()
@@ -143,7 +202,6 @@ function createServer(opts) {
         else {
             res.end(JSON.stringify(req.query));
         }
-
     })
 
     return http.createServer(app)
