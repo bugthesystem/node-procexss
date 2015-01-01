@@ -26,7 +26,7 @@ This middleware sanitize req.body or req.query and adds a `req.dirty` flasg to i
 - `sanitizeBody`  Boolean - Optional. If the req.body sanitize is enabled or not. Defaults to `true`
 - `sanitizeQuery`  Boolean - Optional. If the req.query sanitize is enabled or not. Defaults to `true`
 - `mode` String -Optional. A flag to choose mode (sanitize | header) 
- * `sanitize`: String - Optional. Works on request body or query and sanitize it if xss exist.
+ * `sanitize`: Works on request body or query and sanitize it if xss exist.
  * `header`: Adds `X-XSS-Protection` header to response.
 - `header` Options for `header` mode (enabled, mode)
  * `enabled` Boolean - Optional. If the header is enabled or not (see header docs). Defaults to `1`.
