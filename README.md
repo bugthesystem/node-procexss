@@ -64,7 +64,7 @@ app.use(procexss(opts))
 ```js
 //Whitelist
 app.use(procexss({
-            whiteList: ['/'] 
+            whiteList: ['/dashboard'] 
             }))
 ```
 
