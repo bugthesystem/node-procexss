@@ -21,10 +21,16 @@ This middleware sanitize req.body or req.query and adds a `req.dirty` flasg to i
 
 #### Options
 
-- `pattern` A regex to check xss. (default:embedded)
-- `whiteList` List of ignored urls. (default:[])
-- `sanitizeBody` A flag to enable req.body sanitization. (default:true)
-- `sanitizeQuery` A flag to enable req.body sanitization. (default:true)
+- `pattern`  String - Optional. A regex to check xss. Defaults to `embedded!!`
+- `whiteList`  Array[String] - Optional. List of ignored urls. Defaults to `[]`
+- `sanitizeBody`  Boolean - Optional. If the req.body sanitize is enabled or not. Defaults to `true`
+- `sanitizeQuery`  Boolean - Optional. If the req.query sanitize is enabled or not. Defaults to `true`
+- `mode` String -Optional. A flag to choose mode (sanitize | header) 
+ * `sanitize`: String - Optional. Works on request body or query and sanitize it if xss exist.
+ * `header`: Adds `X-XSS-Protection` header to response.
+- `header` Options for `header` mode (enabled, mode)
+ * `enabled` Boolean - Optional. If the header is enabled or not (see header docs). Defaults to `1`.
+ * `mode`  String - Optional. Mode to set on the header (see header docs). Defaults to block. Defaults to `sanitize`
 
 ## Example
 
@@ -53,6 +59,31 @@ app.use(bodyParser.json())
 
 app.use(procexss(opts))
 
+```
+
+```js
+//Whitelist
+app.use(procexss({
+            whiteList: ['/'] 
+            }))
+```
+
+```js
+//Mode `header` default settings
+app.use(procexss({
+                mode: 'header'
+            }))
+```
+
+```js
+//Mode `header` with custom mode
+app.use(procexss({
+                mode: 'header',
+                header: {
+                    enabled: 1,
+                    mode: 'foo'
+                }
+            }))
 ```
 
 ## License
