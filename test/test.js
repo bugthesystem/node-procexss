@@ -1,12 +1,13 @@
 process.env.NODE_ENV = 'test';
 
-var
-    assert = require('assert'),
-    connect = require('connect'),
-    bodyParser = require('body-parser'),
-    http = require('http')
-
-, request = require('supertest'), url = require('url'), should = require('should'), sanitizer = require('sanitizer'), procexss = require('..');
+var connect = require('connect');
+var bodyParser = require('body-parser');
+var http = require('http');
+var request = require('supertest');
+var url = require('url');
+var should = require('should');
+var sanitizer = require('sanitizer');
+var procexss = require('..');
 
 describe('procexss', function() {
     var formJson, sanitizedFormJson, queryJson, sanitizedQueryJson
