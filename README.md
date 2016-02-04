@@ -44,18 +44,7 @@ var procexss    = require('node-procexss')
 
 var app = express()
 
- app.use(function(req, res, next) {
-        req.query = url.parse(req.url, true).query
-        next()
-})
-
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({
-       extended: false
-}))
-
-// parse application/json
-app.use(bodyParser.json())
+//.. omitted for brevity
 
 app.use(procexss(opts))
 
